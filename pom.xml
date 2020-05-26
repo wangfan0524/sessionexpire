@@ -7,7 +7,7 @@
     <groupId>com.fan.wang</groupId>
     <artifactId>mybatis03</artifactId>
     <version>2.0-RELEASE</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
 
     <name>mybatis03 Maven Webapp</name>
     <!-- FIXME change it to the project's website -->
