@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>华宁</title>
+</head>
+<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+
+<body>
+<h5>欢迎</h5>
+
+
+<div id="message"></div>
+<script>
+
+    var websocket = null;
+    var host = document.location.host;
+
+    //alert(host)
+    // 获得当前登录人员的userName
+    var username = '王帆';
+
+
+
+
+    if ('WebSocket' in window) {
+        // 浏览器支持Websocket
+        websocket = new WebSocket('ws://' + host + '/'+ '/webSocket/' + username);
+    } else {
+        // 浏览器 Not support websocket
+    }
+
+    websocket.onerror = function () {
+        setMessageInnerHTML("WebSocket连接发生错误");
+    };
+
+    //WebSocket连接成功建立的回调方法
+    websocket.onopen = function () {
+        setMessageInnerHTML("WebSocket连接成功");
+    };
+
+    //接收到消息的回调方法
+    websocket.onmessage = function (event) {
+        alert(event.data);
+        // websocket.close();
+        // alert("webSocket已关闭！")
+    };
+
+    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+    window.onbeforeunload = function () {
+        closeWebSocket();
+    };
+
+    //关闭WebSocket连接
+    function closeWebSocket() {
+        websocket.close();
+    }
+
+    //连接关闭的回调方法
+    websocket.onclose = function () {
+        setMessageInnerHTML("WebSocket连接关闭");
+    };
+
+    //将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        document.getElementById('message').innerHTML += innerHTML + '<br/>';
+    }
+</script>
+</body>
+</html>

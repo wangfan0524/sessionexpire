@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+
+http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+
+
+http://www.springframework.org/schema/context
+
+
+http://www.springframework.org/schema/context/spring-context-4.1.xsd
+
+
+http://www.springframework.org/schema/mvc
+
+
+http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--指明 controller 所在包，并扫描其中的注解-->
+    <!--springmvc的配置文件中只配置扫描@Controller的注解-->
+    <context:component-scan base-package="com.controller"
+                            use-default-filters="false">
+        <context:include-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+    <!--激活@Required、@Autowired、JSR 250's、@PostConstruct等标注-->
+    <context:annotation-config/>
+    <!-- 静态资源(js、image等)的访问 -->
+    <mvc:default-servlet-handler/>
+    <mvc:resources mapping="/js/**" location="/js/"></mvc:resources>
+    <!-- 开启注解 -->
+    <!--使DispatchServlet开启基于annotation的HandlerMapping-->
+    <!--配置了HandlerMapping和HandlerAdapter-->
+    <mvc:annotation-driven/>
+
+    <!-- 对模型视图名称的解析，即在模型视图名称添加前后缀：/WEB-INF/jsp/文件夹下的jsp文件 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/WEB-INF/view/</value>
+        </property>
+        <property name="suffix">
+            <value>.html</value>
+        </property>
+    </bean>
+</beans>

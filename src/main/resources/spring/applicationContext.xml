@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+       xmlns:context="http://www.springframework.org/schema/context">
+    <context:component-scan base-package="com.utils"/>
+    <context:component-scan base-package="com.service.*"/>
+    <context:component-scan base-package="com.sessionlistener"/>
+    <context:property-placeholder location="classpath:log4j.properties"/>
+    <!--构造数据源，或数据库连接池-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+        <!--驱动类名 -->
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+        <!-- url -->
+        <property name="url" value="jdbc:oracle:thin:@//10.107.213.41:15010/rbspitdb" />
+        <!-- 用户名 -->
+        <property name="username" value="rbscmfsit" />
+        <!-- 密码 -->
+        <property name="password" value="QWer123##45" />
+    </bean>
+
+
+    <!--<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>jdbc/hap_dev</value>
+        </property>
+    </bean>-->
+
+    <!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+        <property name="url" value="jdbc:oracle:thin:@//10.107.213.41:15010/rbspitdb"></property>
+        <property name="username" value="rbscmfsit"></property>
+        <property name="password" value="QWer123##45"></property>
+        <property name="maxActive" value="100"></property>
+        <property name="maxIdle" value="30"></property>
+        <property name="maxWait" value="10"></property>
+        <property name="defaultAutoCommit" value="false"></property>
+    </bean>-->
+
+    <!--3 会话工厂bean sqlSessionFactoryBean -->
+    <!--基于会话工厂生成sqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- 数据源 -->
+        <property name="dataSource" ref="dataSource"></property>
+        <!-- sql映射文件路径 -->
+        <!--<property name="mapperLocations" value="classpath:/com/mapper/**/*.xml"></property>-->
+    </bean>
+
+    <!--4 自动扫描对象关系映射 -->
+    <!--基于sqlSessionFactory生成session，扫描配置的路径 将接口注入  类似于session.getMapper(*.class)-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 指定要自动扫描接口的基础包，实现接口 -->
+        <property name="basePackage" value="com.mapper"></property>
+        <!--指定会话工厂，如果当前上下文中只定义了一个则该属性可省去 -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+    </bean>
+
+    <!--5 声明式事务管理 -->
+    <!--定义事物管理器，由spring管理事务 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!--支持注解驱动的事务管理，指定事务管理器 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!--6 容器自动扫描IOC组件  -->
+    <!--<context:component-scan base-package="com.zhangguo.bookstore"></context:component-scan>-->
+
+    <!--配置前置通知切面程序-->
+    <bean id="myBeforeAdvice" class="com.aop.MyBeforeAdvice"/>
+    <!--配置异常通知切面程序-->
+    <bean id="myExceptionAdvice" class="com.aop.MyExceptionAdvice"></bean>
+    <aop:config>
+        <!--配置切点-->
+        <aop:pointcut  expression="execution(* com.service.TestService.selectLocal(..))" id="pointcut"/>
+        <!--配置通知-->
+        <aop:advisor advice-ref="myBeforeAdvice" pointcut-ref="pointcut"/>
+        <!--通过aspect实现异常通知-->
+        <aop:aspect ref="myExceptionAdvice">
+            <aop:pointcut id="mypoint" expression="execution(* com.service.TestService.selectLocal(..))"/>
+            <aop:after-throwing method="myexception" pointcut-ref="mypoint" throwing="e1"/>
+        </aop:aspect>
+    </aop:config>
+
+    <!--7 aspectj支持自动代理实现AOP功能 -->
+    <!--expose-proxy="true"将代理暴露出来-->
+    <aop:aspectj-autoproxy proxy-target-class="true" expose-proxy="true"/>
+</beans>

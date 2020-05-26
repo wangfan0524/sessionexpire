@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mapper.ClmStatementRelaMapper">
+    <resultMap id="BaseResultMap" type="com.dto.ClmStatementRela" >
+        <result column="RELATIVE_ID" property="relativeId" jdbcType="DECIMAL" />
+        <result column="STATEMENT_ID" property="statementId" jdbcType="DECIMAL" />
+        <result column="CLAIM_HEADER_ID" property="claimHeaderId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_APPLICATION_ID" property="programApplicationId" jdbcType="DECIMAL" />
+        <result column="PROGRAM_UPDATE_DATE" property="programUpdateDate" jdbcType="DATE" />
+        <result column="CLAIM_NUM" property="claimNum" jdbcType="VARCHAR" />
+
+    </resultMap>
+    <cache readOnly="true"/>
+
+    <select id="selectLocal" resultMap="BaseResultMap" parameterType="int">
+        SELECT cch.claim_header_id claimHeaderId,
+               cch.claim_num
+          from cmf_clm_claim_headers cch
+         where   ROWNUM &lt; #{row}
+
+    </select>
+
+    <select id="selectLocal2" resultMap="BaseResultMap" parameterType="int">
+        SELECT cch.claim_header_id claimHeaderId,
+               cch.claim_num
+          from cmf_clm_claim_headers cch
+         where   ROWNUM &lt; #{row}
+
+    </select>
+    <insert id="ins" parameterType="com.dto.ClmStatementRela">
+        INSERT INTO CMF_CLM_STATEMENT_RELA (RELATIVE_ID,STATEMENT_ID,CLAIM_HEADER_ID) VALUES(#{relativeId},#{statementId},#{claimHeaderId})
+    </insert>
+
+</mapper>

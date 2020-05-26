@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>rewrwerwerwerewrwe</title>
+</head>
+<script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+<script>
+
+    $(function() {
+        $("#code").click(function () {
+            $("#codeimag").attr("src","getValidateCode?date="+new Date())
+        })
+    /*     $("#login").click(function () {
+             var data={};
+             data.userName=$("#username").val();
+             data.password=$("#password").val();
+             data.code=$("#vcode").val();
+             console.log(JSON.stringify(data))
+             $.ajax({
+                 url: 'login',
+                 type: "POST",
+                 dataType: "json",
+                 contentType: "application/json",
+                 data:JSON.stringify(data),
+                 success: function (response) {
+                    if (response.flag==false) {
+                        //alert(response.msg)
+                    }
+
+
+
+                 }
+             });
+         })*/
+
+     })
+
+
+</script>
+<body>
+<form action="/login" enctype="multipart/form-data" method="post">
+
+
+        用户名:<input type="text" name="username" id="username"></br></br>
+        密码:<input type="password" name="password" id="password"></br>
+        验证码:<input type="text" name ="code" size="3" id="vcode"> <img id="codeimag" src="getValidateCode"><a id="code" href="javascript:void(0)">看不清</a>
+        <input type="submit" id="login" name="提交" value="提交">
+</form>
+</body>
+
+
+</html>
